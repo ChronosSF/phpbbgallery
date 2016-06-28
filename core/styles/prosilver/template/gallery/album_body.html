@@ -1,4 +1,6 @@
 <!-- INCLUDE gallery/gallery_header.html -->
+<!-- INCLUDEJS @phpbbgallery_core/js/viewer.js -->
+<!-- INCLUDEJS @phpbbgallery_core/js/addviewer.js -->
 
 <h2><a href="{U_VIEW_ALBUM}">{ALBUM_NAME}</a></h2>
 
@@ -63,13 +65,14 @@
 
 	</div>
 <!-- ENDIF -->
-
+	<div data-wrapper>
 <!-- IF .imageblock -->
 	<!-- IF S_IN_GALLERY_POPUP -->
 		<!-- INCLUDE gallery/imageblock_popup.html -->
 	<!-- ELSE -->
 		<!-- INCLUDE gallery/imageblock_polaroid.html -->
 	<!-- ENDIF -->
+	</div>
 <!-- ELSE -->
 	<!-- IF S_IS_POSTABLE -->
 	<div class="panel" style="margin-top: 20px;">

@@ -11,7 +11,14 @@
 	</p>
 	<hr />
 	<div id="thumbnail">
-	<!-- IF imageblock.image.UC_THUMBNAIL_ACTION --><a href="{imageblock.image.UC_THUMBNAIL_ACTION}"><!-- ENDIF --><img src="{imageblock.image.UC_THUMBNAIL}" alt="{imageblock.image.UC_IMAGE_NAME}" title="{imageblock.image.UC_IMAGE_NAME}" /><!-- IF imageblock.image.UC_THUMBNAIL_ACTION --></a><!-- ENDIF -->
+	<!-- IF imageblock.image.UC_THUMBNAIL_ACTION -->
+	<!-- ENDIF -->
+		<img data-original="{imageblock.image.UC_THUMBNAIL_ACTION}/source"
+			src="{imageblock.image.UC_THUMBNAIL}"
+			alt="{imageblock.image.UC_IMAGE_NAME}"
+			title="{imageblock.image.UC_IMAGE_NAME}" />
+	<!-- IF imageblock.image.UC_THUMBNAIL_ACTION -->
+	<!-- ENDIF -->
 	</div>
 	<hr />
 	<!-- IF imageblock.image.U_ALBUM -->{L_ALBUM_NAME}{L_COLON} <a href="{imageblock.image.U_ALBUM}" style="font-weight: bold;" title="{imageblock.image.ALBUM_NAME}">{imageblock.image.ALBUM_NAME}</a><br /><!-- ENDIF -->
