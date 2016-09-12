@@ -1,4 +1,6 @@
 <!-- INCLUDE gallery/gallery_header.html -->
+<!-- INCLUDEJS @phpbbgallery_core/js/viewer.js -->
+<!-- INCLUDEJS @phpbbgallery_core/js/addviewer.js -->
 <script type="text/javascript">
 function getElement(iElementId)
 {
@@ -58,7 +60,9 @@ function toggleElement(oElement)
 	</form>
 <!-- ENDIF -->
 <!-- IF SEARCH_MATCHES -->
-	<!-- INCLUDE gallery/imageblock_polaroid.html -->
+	<div data-wrapper>
+		<!-- INCLUDE gallery/imageblock_polaroid.html -->
+	</div>
 <!-- ENDIF -->
 <!-- IF .commentrow -->
 <div id="recent-comments">

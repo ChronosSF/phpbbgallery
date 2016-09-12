@@ -1,4 +1,7 @@
 <!-- INCLUDE gallery/gallery_header.html -->
+<!-- INCLUDEJS @phpbbgallery_core/js/viewer.js -->
+<!-- INCLUDEJS @phpbbgallery_core/js/addviewer.js -->
+
 <script type="text/javascript">
 function getElement(iElementId)
 {
@@ -194,7 +197,9 @@ function toggleElement(oElement)
 <!-- ENDIF -->
 
 <!-- IF U_RECENT or U_RANDOM-->
-	<!-- INCLUDE gallery/imageblock_polaroid.html -->
+	<div data-wrapper>
+		<!-- INCLUDE gallery/imageblock_polaroid.html -->
+	</div>
 <!-- ENDIF -->
 <!-- IF U_RECENT_COMMENTS -->
 	<h2><a href="javascript: toggleElement( getElement('recent-comments'));">{L_SEARCH_RECENT_COMMENTS}</a> </h2>
