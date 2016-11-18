@@ -79,10 +79,13 @@ class search
 	}
 
 	/**
-	* Generate random images and populate template
-	* @param (int)	$limit	how many images to generate_link
-	*/
-
+	 * Generate random images and populate template
+	 * @param (int)    $limit    how many images to generate_link
+	 * @param int $user
+	 * @param string $fields
+	 * @param bool $block_name
+	 * @param bool $u_block
+	 */
 	public function random($limit, $user = 0, $fields = 'rrc_gindex_display', $block_name = false, $u_block = false)
 	{
 		// Define some vars
@@ -201,7 +204,6 @@ class search
 	* Get all recent images the user has access to
 	* return (int) $images_count
 	*/
-
 	public function recent_count()
 	{
 		$this->gallery_auth->load_user_premissions($this->user->data['user_id']);
@@ -229,11 +231,10 @@ class search
 	}
 
 	/**
-	* recent comments
-	* @param (int)	$limit How many imagese to query
-	* @param (int)	$start From which image to start
-	*/
-
+	 * recent comments
+	 * @param (int)    $limit How many imagese to query
+	 * @param int $start
+	 */
 	public function recent_comments($limit, $start = 0)
 	{
 		$this->gallery_auth->load_user_premissions($this->user->data['user_id']);
@@ -331,7 +332,6 @@ class search
 	 * @param bool $block_name
 	 * @param bool $u_block
 	 */
-
 	public function recent($limit, $start = 0, $user = 0, $fields = 'rrc_gindex_display', $block_name = false, $u_block = false)
 	{
 		$pagination = true;
@@ -341,7 +341,6 @@ class search
 			$pagination = false;
 		}
 		$this->gallery_auth->load_user_premissions($this->user->data['user_id']);
-		//$sql_order = 'image_id DESC';
 		$sql_order = '';
 		switch ($this->gallery_config->get('default_sort_key'))
 		{
@@ -504,8 +503,10 @@ class search
 	}
 
 	/**
-	* Get top rated image
-	*/
+	 * Get top rated image
+	 * @param $limit
+	 * @param int $start
+	 */
 	public function rating($limit, $start = 0)
 	{
 		$this->gallery_auth->load_user_premissions($this->user->data['user_id']);
