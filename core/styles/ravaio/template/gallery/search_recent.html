@@ -1,0 +1,32 @@
+<!-- INCLUDE gallery/gallery_header.html -->
+<!-- INCLUDEJS @phpbbgallery_core/js/viewer.js -->
+<!-- INCLUDEJS @phpbbgallery_core/js/addviewer.js -->
+
+<!-- IF .pagination or TOTAL_IMAGES -->
+	<div class="pagination">
+		{TOTAL_IMAGES}
+		<!-- IF .pagination -->
+			 &bull; <!-- INCLUDE pagination.html -->
+		<!-- ELSE -->
+			 &bull; {PAGE_NUMBER}
+		<!-- ENDIF -->
+	</div>
+<!-- ENDIF -->
+
+<div data-wrapper>
+	<!-- INCLUDE gallery/imageblock_polaroid.html -->
+</div>
+
+<!-- IF .pagination or TOTAL_IMAGES -->
+	<div class="pagination">
+		{TOTAL_IMAGES}
+		<!-- IF .pagination -->
+			 &bull; <!-- INCLUDE pagination.html -->
+		<!-- ELSE -->
+			 &bull; {PAGE_NUMBER}
+		<!-- ENDIF -->
+	</div>
+<!-- ENDIF -->
+
+
+<!-- INCLUDE gallery/gallery_footer.html -->
