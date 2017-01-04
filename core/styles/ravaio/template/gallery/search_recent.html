@@ -2,31 +2,48 @@
 <!-- INCLUDEJS @phpbbgallery_core/js/viewer.js -->
 <!-- INCLUDEJS @phpbbgallery_core/js/addviewer.js -->
 
-<!-- IF .pagination or TOTAL_IMAGES -->
-	<div class="pagination">
-		{TOTAL_IMAGES}
-		<!-- IF .pagination -->
-			 &bull; <!-- INCLUDE pagination.html -->
-		<!-- ELSE -->
-			 &bull; {PAGE_NUMBER}
-		<!-- ENDIF -->
+<div id="sub-header">
+	<div class="chunk">
+		<div class="sub-header-title">
+			<h2 class="forum-title">{L_RECENT_IMAGES}</h2>
+		</div>
+		<div class="sub-header-buttons">
+		</div>
 	</div>
-<!-- ENDIF -->
-
-<div data-wrapper>
-	<!-- INCLUDE gallery/imageblock_polaroid.html -->
 </div>
 
-<!-- IF .pagination or TOTAL_IMAGES -->
-	<div class="pagination">
-		{TOTAL_IMAGES}
-		<!-- IF .pagination -->
-			 &bull; <!-- INCLUDE pagination.html -->
-		<!-- ELSE -->
-			 &bull; {PAGE_NUMBER}
-		<!-- ENDIF -->
-	</div>
-<!-- ENDIF -->
+<div id="mbrs" class="background-main">
+	<div class="chunk">
+		<div class="content-main">
+		
+			<!-- IF .pagination or TOTAL_IMAGES -->
+				<div class="pagination">
+					{TOTAL_IMAGES}
+					<!-- IF .pagination -->
+						&bull; <!-- INCLUDE pagination.html -->
+					<!-- ELSE -->
+						&bull; {PAGE_NUMBER}
+					<!-- ENDIF -->
+				</div>
+			<!-- ENDIF -->
 
+			<div data-wrapper>
+				<!-- INCLUDE gallery/imageblock_polaroid.html -->
+			</div>
+
+			<!-- IF .pagination or TOTAL_IMAGES -->
+				<div class="pagination">
+					{TOTAL_IMAGES}
+					<!-- IF .pagination -->
+						&bull; <!-- INCLUDE pagination.html -->
+					<!-- ELSE -->
+						&bull; {PAGE_NUMBER}
+					<!-- ENDIF -->
+				</div>
+			<!-- ENDIF -->
+
+		</div>
+	</div>
+</div>
 
 <!-- INCLUDE gallery/gallery_footer.html -->
