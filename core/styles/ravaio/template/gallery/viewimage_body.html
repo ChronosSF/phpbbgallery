@@ -153,67 +153,77 @@
 					</aside>
 					<article class="postbody">
 						<h3>{IMAGE_NAME}</h3>
-						
-						
 						<div class="post-content">
-							<!--TODO-->
-							<fieldset class="fields1 anti-postbody">
-								<!-- IF CONTEST_RANK -->
-								<dl class="column1">
-									<dt><label>{L_CONTEST_RESULT}{L_COLON}</label></dt>
-									<dd>{CONTEST_RANK}</dd>
-								</dl>
-								<!-- ENDIF -->
-								<dl class="column2">
-									<dt><label>{L_UPLOADED_ON_DATE}{L_COLON}</label></dt>
-									<dd>{IMAGE_TIME}</dd>
-								</dl>
-								<!-- IF IMAGE_URL -->
-								<dl class="column1">
-									<dt><label>{L_IMAGE_URL}{L_COLON}</label></dt>
-									<dd><input type="text" size="28" value="{IMAGE_URL}" class="inputbox autowidth-gallery" onclick="this.focus();this.select();" /></dd>
-								</dl>
-								<!-- ENDIF -->
-								<dl class="column2">
-									<dt><label>{L_GALLERY_VIEWS}{L_COLON}</label></dt>
-									<dd>{IMAGE_VIEW}</dd>
-								</dl>
-								<!-- IF IMAGE_BBCODE -->
-								<dl class="column1">
-									<dt><label>{L_IMAGE_BBCODE}{L_COLON}</label></dt>
-									<dd><input type="text" size="28" value="{IMAGE_BBCODE}" class="inputbox autowidth-gallery" onclick="this.focus();this.select();" /></dd>
-									<!-- IF IMAGE_IMGURL_BBCODE -->
-										<dd><input type="text" size="28" value="{IMAGE_IMGURL_BBCODE}" class="inputbox autowidth-gallery" onclick="this.focus();this.select();" /></dd>
+							<div class="row">
+								<ul style="float: left; width: 40%; list-style: none;">
+									<!-- IF CONTEST_RANK -->
+										<li>
+											<dt style="float: left; width: 25%"><label>{L_CONTEST_RESULT}{L_COLON}</label></dt>
+											<dd style="float: left;">{CONTEST_RANK}</dd>
+											<div style="clear:both;"></div>
+										</li>
 									<!-- ENDIF -->
-								</dl>
-								<!-- ENDIF -->
-								<!-- IF S_VIEW_RATE -->
-								<dl class="column2">
-									<dt><label>{L_RATING}{L_COLON}</label></dt>
-									<dd><!-- IF CONTEST_RESULT_HIDDEN -->{CONTEST_RESULT_HIDDEN}<!-- ELSE -->{IMAGE_RATING}<!-- ENDIF --><!-- IF S_YOUR_RATING --> ({L_YOUR_RATING}{L_COLON} {S_YOUR_RATING})<!-- ENDIF --></dd>
-								</dl>
-								<!-- ENDIF -->
-								<!-- IF S_ALLOWED_TO_RATE -->
-								<form id="postform" action="{S_RATE_ACTION}" method="post">
-								<dl class="column2">
-									<dt><label>{L_YOUR_RATING}{L_COLON}</label></dt>
-									<dd>
-										<!-- IF .rate_scale -->
-											<select name="rating" onchange="this.form.submit();">
-											<!-- BEGIN rate_scale -->
-												<!-- IF rate_scale.RATE_POINT == 1 --><option value="0">{L_DONT_RATE_IMAGE}</option><!-- ENDIF -->
-												<option value="{rate_scale.RATE_POINT}">{rate_scale.RATE_POINT}</option>
-											<!-- END rate_scale -->
-											</select>
-										<!-- ELSE -->
-											{CONTEST_RATING}
-										<!-- ENDIF -->
-									</dd>
-								</dl>
-								{S_FORM_TOKEN}
-								</form>
-								<!-- ENDIF -->
-							</fieldset>
+									<!-- IF IMAGE_URL -->
+										<li>
+											<dt style="float: left; width: 25%"><label>{L_IMAGE_URL}{L_COLON}</label></dt>
+											<dd style="float: left; width: 50%"><input style="margin-top: -5px;" type="text" size="28" value="{IMAGE_URL}" class="input" onclick="this.focus();this.select();" /></dd>
+											<div style="clear:both;"></div>
+										</li>
+									<!-- ENDIF -->
+									<!-- IF IMAGE_BBCODE -->
+										<li>
+											<dt style="float: left; width: 25%"><label>{L_IMAGE_BBCODE}{L_COLON}</label></dt>
+											<dd style="float: left; width: 50%"><input style="margin-top: -5px;" type="text" size="28" value="{IMAGE_BBCODE}" class="input" onclick="this.focus();this.select();" /></dd>
+											<div style="clear:both;"></div>
+											<dt style="float: left; width: 25%"><label>&nbsp;</lable></dt>
+											<!-- IF IMAGE_IMGURL_BBCODE -->
+												<dd style="float: left; width: 50%"><input style="margin-top: -5px;" type="text" size="28" value="{IMAGE_IMGURL_BBCODE}" class="input" onclick="this.focus();this.select();" /></dd>
+											<!-- ENDIF -->
+											<div style="clear:both;"></div>
+										</li>
+									<!-- ENDIF -->
+								</ul>
+								<ul style="float: left; width: 40%; list-style: none;">
+									<li>
+										<dt style="float: left; width: 25%"><label>{L_UPLOADED_ON_DATE}{L_COLON}</label></dt>
+										<dd style="float: left; width: 50%">{IMAGE_TIME}</dd>
+										<div style="clear:both;"></div>
+									</li>
+									<li>
+										<dt style="float: left; width: 25%"><label>{L_GALLERY_VIEWS}{L_COLON}</label></dt>
+										<dd style="float: left; width: 50%">{IMAGE_VIEW}</dd>
+										<div style="clear:both;"></div>
+									</li>
+									<!-- IF S_VIEW_RATE -->
+										<li>
+											<dt style="float: left; width: 25%"><label>{L_RATING}{L_COLON}</label></dt>
+											<dd style="float: left; width: 50%"><!-- IF CONTEST_RESULT_HIDDEN -->{CONTEST_RESULT_HIDDEN}<!-- ELSE -->{IMAGE_RATING}<!-- ENDIF --><!-- IF S_YOUR_RATING --> ({L_YOUR_RATING}{L_COLON} {S_YOUR_RATING})<!-- ENDIF --></dd>
+											<div style="clear:both;"></div>
+										</li>
+									<!-- ENDIF -->
+									<!-- IF S_ALLOWED_TO_RATE -->
+										<form id="postform" action="{S_RATE_ACTION}" method="post">
+											<li>
+												<dt style="float: left; width: 25%"><label>{L_YOUR_RATING}{L_COLON}</label></dt>
+												<dd style="float: left; width: 50%">
+													<!-- IF .rate_scale -->
+														<select name="rating" onchange="this.form.submit();">
+														<!-- BEGIN rate_scale -->
+															<!-- IF rate_scale.RATE_POINT == 1 --><option value="0">{L_DONT_RATE_IMAGE}</option><!-- ENDIF -->
+															<option value="{rate_scale.RATE_POINT}">{rate_scale.RATE_POINT}</option>
+														<!-- END rate_scale -->
+														</select>
+													<!-- ELSE -->
+														{CONTEST_RATING}
+													<!-- ENDIF -->
+												</dd>
+												<div style="clear:both;"></div>
+											</li>
+											{S_FORM_TOKEN}
+										</form>
+									<!-- ENDIF -->
+								</ul>
+							</div>
 							<!-- EVENT gallery_viewimage_details -->
 						</div>
 						<ul class="post-actions">
@@ -224,66 +234,66 @@
 						</ul>
 					</article>
 			
-			<!-- IF S_QUICK_MOD -->
-			<form method="post" action="{S_MOD_ACTION}">
-			<fieldset class="quickmod" style="float: none; width: 100%;">
-				<label for="quick-mod-select">{L_QUICK_MOD}{L_COLON}</label>
-				<select name="action" id="quick-mod-select">
-					<!-- IF S_QM_MOVE --><option value="images_move">{L_QUEUE_A_MOVE}</option><!-- ENDIF -->
-					<!-- IF S_QM_EDIT --><option value="image_edit">{L_EDIT_IMAGE}</option><!-- ENDIF -->
-					<!-- IF S_QM_STATUS -->
-						<!-- IF not S_STATUS_UNAPPROVED --><option value="images_unapprove">{L_QUEUE_A_UNAPPROVE}</option><!-- ENDIF -->
-						<!-- IF not S_STATUS_APPROVED --><option value="images_approve">{L_QUEUE_A_APPROVE}</option><!-- ENDIF -->
-						<!-- IF not S_STATUS_LOCKED --><option value="images_lock">{L_QUEUE_A_LOCK}</option><!-- ENDIF -->
+					<!-- IF S_QUICK_MOD -->
+						<br />
+						<form method="post" action="{S_MOD_ACTION}">
+							<fieldset class="quickmod" style="float: right; width: 30%;">
+								<label for="quick-mod-select">{L_QUICK_MOD}{L_COLON}</label>
+								<select name="action" id="quick-mod-select">
+									<!-- IF S_QM_MOVE --><option value="images_move">{L_QUEUE_A_MOVE}</option><!-- ENDIF -->
+									<!-- IF S_QM_EDIT --><option value="image_edit">{L_EDIT_IMAGE}</option><!-- ENDIF -->
+									<!-- IF S_QM_STATUS -->
+										<!-- IF not S_STATUS_UNAPPROVED --><option value="images_unapprove">{L_QUEUE_A_UNAPPROVE}</option><!-- ENDIF -->
+										<!-- IF not S_STATUS_APPROVED --><option value="images_approve">{L_QUEUE_A_APPROVE}</option><!-- ENDIF -->
+										<!-- IF not S_STATUS_LOCKED --><option value="images_lock">{L_QUEUE_A_LOCK}</option><!-- ENDIF -->
+									<!-- ENDIF -->
+									<!-- IF S_QM_DELETE --><option value="images_delete">{L_QUEUE_A_DELETE}</option><!-- ENDIF -->
+									<!-- IF S_QM_REPORT and S_IMAGE_REPORTED --><option value="report_details">{L_READ_REPORT}</option><!-- ENDIF -->
+								</select>
+								<input type="submit" class="button" value="{L_GO}" class="button2" />
+								{S_FORM_TOKEN}
+							</fieldset>
+							<div style="clear: both;"></div>
+						</form>
 					<!-- ENDIF -->
-					<!-- IF S_QM_DELETE --><option value="images_delete">{L_QUEUE_A_DELETE}</option><!-- ENDIF -->
-					<!-- IF S_QM_REPORT and S_IMAGE_REPORTED --><option value="report_details">{L_READ_REPORT}</option><!-- ENDIF -->
-				</select>
-				<input type="submit" value="{L_GO}" class="button2" />
-				{S_FORM_TOKEN}
-			</fieldset>
-			</form>
-			<!-- ENDIF -->
+
+					<form method="post" action="{S_COMMENT_ACTION}" id="qr_postform">
+					<!-- EVENT quickreply_editor_panel_before -->
+						<div class="message-box">
+							<div class="message-box">
+								<h2 class="quickreply-title">{L_POST_COMMENT}</h2>
+								<fieldset class="fields1">
+								<!-- IF not S_USER_LOGGED_IN -->
+									<dl>
+										<dt><label>{L_USERNAME}{L_COLON}</label></dt>
+										<dd><input class="inputbox autowidth" type="text" name="username" maxlength="32" /></dd>
+									</dl>
+								<!-- ENDIF -->
+								<!-- IF CAPTCHA_TEMPLATE -->
+									<!-- INCLUDE {CAPTCHA_TEMPLATE} -->
+								<!-- ENDIF -->
+								<!-- EVENT quickreply_editor_message_before -->
+								<div id="message-box">
+									<textarea style="height: 100px; min-height: 100px;" name="message" rows="7" cols="76" tabindex="3" class="input" name="message" id="message"></textarea>
+								</div>
+								<!-- EVENT quickreply_editor_message_after -->
+								</fieldset>
+								<fieldset class="action-submit">
+									{S_FORM_TOKEN}
+									{QR_HIDDEN_FIELDS}
+									<input type="submit" accesskey="f" tabindex="6" name="preview" value="{L_FULL_EDITOR}" class="button" id="qr_full_editor" />&nbsp;
+									<input type="submit" accesskey="s" tabindex="7" name="submit" value="{L_SUBMIT}" class="button"/>&nbsp;
+								</fieldset>
+							</div>
+						</div>
+					<!-- EVENT quickreply_editor_panel_after -->
+					</form>
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
-<!-- IF not S_IS_BOT and S_ALLOWED_TO_COMMENT -->
-	<!-- IF S_ALLOWED_TO_COMMENT and not S_HIDE_COMMENT_INPUT -->
-		<form method="post" action="{S_COMMENT_ACTION}" id="qr_postform">
-		<!-- EVENT quickreply_editor_panel_before -->
-			<div class="panel">
-				<div class="inner">
-						<h2 class="quickreply-title">{L_POST_COMMENT}</h2>
-						<fieldset class="fields1">
-						<!-- IF not S_USER_LOGGED_IN -->
-							<dl>
-								<dt><label>{L_USERNAME}{L_COLON}</label></dt>
-								<dd><input class="inputbox autowidth" type="text" name="username" maxlength="32" /></dd>
-							</dl>
-						<!-- ENDIF -->
-						<!-- IF CAPTCHA_TEMPLATE -->
-							<!-- INCLUDE {CAPTCHA_TEMPLATE} -->
-						<!-- ENDIF -->
-						<!-- EVENT quickreply_editor_message_before -->
-						<div id="message-box">
-							<textarea style="height: 9em;" name="message" rows="7" cols="76" tabindex="3" class="inputbox" name="message" id="message"></textarea>
-						</div>
-						<!-- EVENT quickreply_editor_message_after -->
-						</fieldset>
-						<fieldset class="submit-buttons">
-							{S_FORM_TOKEN}
-							{QR_HIDDEN_FIELDS}
-							<input type="submit" accesskey="f" tabindex="6" name="preview" value="{L_FULL_EDITOR}" class="button2" id="qr_full_editor" />&nbsp;
-							<input type="submit" accesskey="s" tabindex="7" name="submit" value="{L_SUBMIT}" class="button1"/>&nbsp;
-						</fieldset>
-				</div>
-			</div>
-		<!-- EVENT quickreply_editor_panel_after -->
-		</form>
-	<!-- ENDIF -->
-<!-- ENDIF -->
 
 <!-- IF S_ALLOWED_READ_COMMENTS -->
 <a name="comments"></a>
