@@ -9,6 +9,7 @@
 */
 
 namespace phpbbgallery\core\controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class moderate
 {
@@ -51,6 +52,7 @@ class moderate
 	 * @param \phpbb\request\request                                    $request   Request object
 	 * @param \phpbb\template\template                                  $template  Template object
 	 * @param \phpbb\user                                               $user      User object
+	 * @param \phpbb\language\language                                  $language
 	 * @param \phpbb\controller\helper                                  $helper    Controller helper object
 	 * @param \phpbbgallery\core\album\display                          $display   Albums display object
 	 * @param \phpbbgallery\core\moderate                               $moderate
@@ -66,19 +68,19 @@ class moderate
 	 * @param string                                                    $root_path Root path
 	 * @param string                                                    $php_ext   php file extension
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\request\request $request,
-	\phpbb\template\template $template, \phpbb\user $user, \phpbb\controller\helper $helper, \phpbbgallery\core\album\display $display, \phpbbgallery\core\moderate $moderate,
+	public function __construct(\phpbb\config\config $config, \phpbb\request\request $request,
+	\phpbb\template\template $template, \phpbb\user $user, \phpbb\language\language $language,
+	\phpbb\controller\helper $helper, \phpbbgallery\core\album\display $display, \phpbbgallery\core\moderate $moderate,
 	\phpbbgallery\core\auth\auth $gallery_auth, \phpbbgallery\core\misc $misc, \phpbbgallery\core\album\album $album, \phpbbgallery\core\image\image $image,
 	\phpbbgallery\core\notification\helper $notification_helper, \phpbbgallery\core\url $url, \phpbbgallery\core\log $gallery_log, \phpbbgallery\core\report $report,
 	\phpbb\user_loader $user_loader,
 	$root_path, $php_ext)
 	{
-		$this->auth = $auth;
 		$this->config = $config;
-		$this->db = $db;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
+		$this->lang = $language;
 		$this->helper = $helper;
 		$this->display = $display;
 		$this->moderate = $moderate;
@@ -100,7 +102,7 @@ class moderate
 	 *    Route: gallery/modarate
 	 *
 	 * @param int $album_id
-	 * @return Symfony\Component\HttpFoundation\Response A Symfony Response object
+	 * @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	 */
 	public function base($album_id = 0)
 	{
@@ -122,9 +124,8 @@ class moderate
 				$this->misc->not_authorised($album_backlink, $album_loginlink, 'LOGIN_EXPLAIN_UPLOAD');
 			}
 		}
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery_mcp'));
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery'));
-		$this->user->add_lang('mcp');
+		$this->lang->add_lang(array('gallery_mcp', 'gallery'), 'phpbbgallery/core');
+		$this->lang->add_lang('mcp');
 		$this->display->display_albums(false, $this->config['load_moderators']);
 		// This is the overview page, so we will need to create some queries
 		// We will use the special moderate helper
@@ -143,7 +144,7 @@ class moderate
 			'U_OVERVIEW'					=> true,
 		));
 
-		return $this->helper->render('gallery/moderate_overview.html', $this->user->lang('GALLERY'));
+		return $this->helper->render('gallery/moderate_overview.html', $this->lang->lang('GALLERY'));
 	}
 
 	/**
@@ -152,7 +153,7 @@ class moderate
 	 *
 	 * @param $page
 	 * @param $album_id
-	 * @return Symfony\Component\HttpFoundation\Response A Symfony Response object
+	 * @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	 */
 	public function queue_approve($page, $album_id)
 	{
@@ -161,9 +162,8 @@ class moderate
 		$back_link = $this->request->variable('back_link', $album_id > 0 ? $this->helper->route('phpbbgallery_core_moderate_queue_approve_album', array('album_id' => $album_id)) : $this->helper->route('phpbbgallery_core_moderate_queue_approve'));
 		list($action, ) = each($action_ary);
 
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery_mcp'));
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery'));
-		$this->user->add_lang('mcp');
+		$this->lang->add_lang(array('gallery_mcp', 'gallery'), 'phpbbgallery/core');
+		$this->lang->add_lang('mcp');
 
 		$this->gallery_auth->load_user_premissions($this->user->data['user_id']);
 		$album_backlink = $album_id === 0 ? $this->helper->route('phpbbgallery_core_moderate') : $this->helper->route('phpbbgallery_core_moderate_album', array('album_id'	=> $album_id));
@@ -197,7 +197,7 @@ class moderate
 						$count = $count + count($approve_array);
 					}
 
-					$message = $this->user->lang('WAITING_APPROVED_IMAGE', $count);
+					$message = $this->lang->lang('WAITING_APPROVED_IMAGE', $count);
 					$this->url->meta_refresh(3, $back_link);
 					trigger_error($message);
 				}
@@ -216,7 +216,7 @@ class moderate
 						$this->moderate->delete_images($delete_array);
 						$count = $count + count($delete_array);
 					}
-					$message = $this->user->lang('WAITING_DISPPROVED_IMAGE', $count);
+					$message = $this->lang->lang('WAITING_DISPPROVED_IMAGE', $count);
 					$this->url->meta_refresh(3, $back_link);
 					trigger_error($message);
 				}
@@ -232,7 +232,7 @@ class moderate
 						$s_hidden_fields .= '<input type="hidden" name="approval[' . $id . '][]" value="' . $var1 . '" />';
 					}
 				}
-				confirm_box(false, $this->user->lang['QUEUES_A_' . strtoupper($action) . '2_CONFIRM'], $s_hidden_fields);
+				confirm_box(false, $this->lang->lang('QUEUES_A_' . strtoupper($action) . '2_CONFIRM'), $s_hidden_fields);
 			}
 		}
 
@@ -245,7 +245,7 @@ class moderate
 			'U_ALBUM_NAME'					=> $album_id > 0 ? $album['album_name'] : false,
 		));
 		$this->moderate->build_list($album_id, $page);
-		return $this->helper->render('gallery/moderate_approve.html', $this->user->lang('GALLERY'));
+		return $this->helper->render('gallery/moderate_approve.html', $this->lang->lang('GALLERY'));
 	}
 
 	/**
@@ -254,13 +254,12 @@ class moderate
 	 *
 	 * @param $page
 	 * @param $album_id
-	 * @return Symfony\Component\HttpFoundation\Response A Symfony Response object
+	 * @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	 */
 	public function action_log($page, $album_id)
 	{
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery_mcp'));
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery'));
-		$this->user->add_lang('mcp');
+		$this->lang->add_lang(array('gallery_mcp', 'gallery'), 'phpbbgallery/core');
+		$this->lang->add_lang('mcp');
 
 		$this->gallery_auth->load_user_premissions($this->user->data['user_id']);
 		$album_backlink = $album_id === 0 ? $this->helper->route('phpbbgallery_core_moderate') : $this->helper->route('phpbbgallery_core_moderate_album', array('album_id'	=> $album_id));
@@ -289,7 +288,7 @@ class moderate
 			'U_ALBUM_NAME'					=> $album_id > 0 ? $album['album_name'] : false,
 		));
 		$this->gallery_log->build_list('moderator', 0, $page, $album_id);
-		return $this->helper->render('gallery/moderate_actions.html', $this->user->lang('GALLERY'));
+		return $this->helper->render('gallery/moderate_actions.html', $this->lang->lang('GALLERY'));
 	}
 
 	/**
@@ -299,7 +298,7 @@ class moderate
 	 * @param $page
 	 * @param $album_id
 	 * @param $status
-	 * @return Symfony\Component\HttpFoundation\Response A Symfony Response object
+	 * @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	 */
 	public function reports($page, $album_id, $status)
 	{
@@ -308,16 +307,15 @@ class moderate
 		$back_link = $this->request->variable('back_link', $album_id > 0 ? $this->helper->route('phpbbgallery_core_moderate_reports_album', array('album_id' => $album_id)) : $this->helper->route('phpbbgallery_core_moderate_reports'));
 		list($action, ) = each($action_ary);
 
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery_mcp'));
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery'));
-		$this->user->add_lang('mcp');
+		$this->lang->add_lang(array('gallery_mcp', 'gallery'), 'phpbbgallery/core');
+		$this->lang->add_lang('mcp');
 
 		if (!empty($report_ary))
 		{
 			if (confirm_box(true))
 			{
 				$this->report->close_reports_by_image($report_ary);
-				$message = $this->user->lang('WAITING_REPORTED_DONE', count($report_ary));
+				$message = $this->lang->lang('WAITING_REPORTED_DONE', count($report_ary));
 				$this->url->meta_refresh(3, $back_link);
 				trigger_error($message);
 			}
@@ -329,7 +327,7 @@ class moderate
 				{
 					$s_hidden_fields .= '<input type="hidden" name="report[]" value="' . $var . '" />';
 				}
-				confirm_box(false, $this->user->lang['REPORTS_A_CLOSE2_CONFIRM'], $s_hidden_fields);
+				confirm_box(false, $this->lang->lang('REPORTS_A_CLOSE2_CONFIRM'), $s_hidden_fields);
 			}
 		}
 		$this->gallery_auth->load_user_premissions($this->user->data['user_id']);
@@ -363,7 +361,7 @@ class moderate
 		));
 
 		$this->report->build_list($album_id, $page, $this->config['phpbb_gallery_items_per_page'], $status);
-		return $this->helper->render('gallery/moderate_reports.html', $this->user->lang('GALLERY'));
+		return $this->helper->render('gallery/moderate_reports.html', $this->lang->lang('GALLERY'));
 	}
 
 	/**
@@ -372,13 +370,12 @@ class moderate
 	 *
 	 * @param $album_id
 	 * @param $page
-	 * @return Symfony\Component\HttpFoundation\Response A Symfony Response object
+	 * @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	 */
 	public function album_overview($album_id, $page)
 	{
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery_mcp'));
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery'));
-		$this->user->add_lang('mcp');
+		$this->lang->add_lang(array('gallery_mcp', 'gallery'), 'phpbbgallery/core');
+		$this->lang->add_lang('mcp');
 
 		$actions_array = $this->request->variable('action', array(0));
 		$action = $this->request->variable('select_action', '');
@@ -394,7 +391,7 @@ class moderate
 						$this->image->approve_images($actions_array, $album_id);
 						$this->album->update_info($album_id);
 
-						$message = $this->user->lang('WAITING_APPROVED_IMAGE', count($actions_array));
+						$message = $this->lang->lang('WAITING_APPROVED_IMAGE', count($actions_array));
 						$this->url->meta_refresh(3, $back_link);
 						trigger_error($message);
 					break;
@@ -402,7 +399,7 @@ class moderate
 						$this->image->unapprove_images($actions_array, $album_id);
 						$this->album->update_info($album_id);
 
-						$message = $this->user->lang('WAITING_UNAPPROVED_IMAGE', count($actions_array));
+						$message = $this->lang->lang('WAITING_UNAPPROVED_IMAGE', count($actions_array));
 						$this->url->meta_refresh(3, $back_link);
 						trigger_error($message);
 					break;
@@ -410,7 +407,7 @@ class moderate
 						$this->image->lock_images($actions_array, $album_id);
 						$this->album->update_info($album_id);
 
-						$message = $this->user->lang('WAITING_LOCKED_IMAGE', count($actions_array));
+						$message = $this->lang->lang('WAITING_LOCKED_IMAGE', count($actions_array));
 						$this->url->meta_refresh(3, $back_link);
 						trigger_error($message);
 					break;
@@ -418,7 +415,7 @@ class moderate
 						$this->moderate->delete_images($actions_array);
 						$this->album->update_info($album_id);
 
-						$message = $this->user->lang('DELETED_IMAGES', count($actions_array));
+						$message = $this->lang->lang('DELETED_IMAGES', count($actions_array));
 						$this->url->meta_refresh(3, $back_link);
 						trigger_error($message);
 					break;
@@ -427,13 +424,13 @@ class moderate
 						$this->album->update_info($album_id);
 						$this->album->update_info($moving_target);
 
-						$message = $this->user->lang('MOVED_IMAGES', count($actions_array));
+						$message = $this->lang->lang('MOVED_IMAGES', count($actions_array));
 						$this->url->meta_refresh(3, $back_link);
 						trigger_error($message);
 					break;
 					case 'report':
 						$this->report->close_reports_by_image($actions_array);
-						$message = $this->user->lang('WAITING_REPORTED_DONE', count($actions_array));
+						$message = $this->lang->lang('WAITING_REPORTED_DONE', count($actions_array));
 						$this->url->meta_refresh(3, $back_link);
 						trigger_error($message);
 					break;
@@ -449,7 +446,7 @@ class moderate
 				}
 				if ($action == 'report')
 				{
-					confirm_box(false, $this->user->lang['REPORT_A_CLOSE2_CONFIRM'], $s_hidden_fields);
+					confirm_box(false, $this->lang->lang('REPORT_A_CLOSE2_CONFIRM'), $s_hidden_fields);
 				}
 				if ($action == 'move')
 				{
@@ -459,11 +456,11 @@ class moderate
 						'S_ALBUM_SELECT'	=> $category_select,
 						'S_HIDDEN_FIELDS'	=> $s_hidden_fields,
 					));
-					return $this->helper->render('gallery/mcp_body.html', $this->user->lang('GALLERY'));
+					return $this->helper->render('gallery/mcp_body.html', $this->lang->lang('GALLERY'));
 				}
 				else
 				{
-					confirm_box(false, $this->user->lang['QUEUES_A_' . strtoupper($action) . '2_CONFIRM'], $s_hidden_fields);
+					confirm_box(false, $this->lang->lang('QUEUES_A_' . strtoupper($action) . '2_CONFIRM'), $s_hidden_fields);
 				}
 			}
 		}
@@ -494,7 +491,7 @@ class moderate
 			'U_ALBUM_NAME'					=> $album_id > 0 ? $album['album_name'] : false,
 		));
 		$this->moderate->album_overview($album_id, $page);
-		return $this->helper->render('gallery/moderate_album_overview.html', $this->user->lang('GALLERY'));
+		return $this->helper->render('gallery/moderate_album_overview.html', $this->lang->lang('GALLERY'));
 	}
 
 	/**
@@ -502,13 +499,12 @@ class moderate
 	 *    Route: gallery/modarate/image/{image_id}
 	 *
 	 * @param $image_id
-	 * @return Symfony\Component\HttpFoundation\Response A Symfony Response object
+	 * @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	 */
 	public function image($image_id)
 	{
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery_mcp'));
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery'));
-		$this->user->add_lang('mcp');
+		$this->lang->add_lang(array('gallery_mcp', 'gallery'), 'phpbbgallery/core');
+		$this->lang->add_lang('mcp');
 		$quick_action = $this->request->variable('action', '');
 
 		// If we have quick mode (EDIT, DELETE) just send us to the page we need
@@ -516,46 +512,53 @@ class moderate
 		{
 			case 'images_move':
 				$route = $this->helper->route('phpbbgallery_core_moderate_image_move', array('image_id'	=> $image_id));
-				redirect($this->url->get_uri($route));
+				$redirect = new RedirectResponse($route);
+				$redirect->send();
 			break;
 			case 'image_edit':
 				$route = $this->helper->route('phpbbgallery_core_image_edit', array('image_id'	=> $image_id));
-				redirect($this->url->get_uri($route));
+				$redirect = new RedirectResponse($route);
+				$redirect->send();
 			break;
 			case 'images_unapprove':
 				$route = $this->helper->route('phpbbgallery_core_moderate_image_unapprove', array('image_id'	=> $image_id));
-				redirect($this->url->get_uri($route));
+				$redirect = new RedirectResponse($route);
+				$redirect->send();
 			break;
 			case 'images_approve':
 				$route = $this->helper->route('phpbbgallery_core_moderate_image_approve', array('image_id'	=> $image_id));
-				redirect($this->url->get_uri($route));
+				$redirect = new RedirectResponse($route);
+				$redirect->send();
 			break;
 			case 'images_lock':
 				$route = $this->helper->route('phpbbgallery_core_moderate_image_lock', array('image_id'	=> $image_id));
-				redirect($this->url->get_uri($route));
+				$redirect = new RedirectResponse($route);
+				$redirect->send();
 			break;
 			case 'images_delete':
 				$route = $this->helper->route('phpbbgallery_core_image_delete', array('image_id'	=> $image_id));
-				redirect($this->url->get_uri($route));
+				$redirect = new RedirectResponse($route);
+				$redirect->send();
 			break;
 			case 'reports_close':
 				if (confirm_box(true))
 				{
 					$back_link =  $this->helper->route('phpbbgallery_core_moderate_image', array('image_id' => $image_id));
 					$this->report->close_reports_by_image($image_id);
-					$message = $this->user->lang('WAITING_REPORTED_DONE', 1);
+					$message = $this->lang->lang('WAITING_REPORTED_DONE', 1);
 					$this->url->meta_refresh(3, $back_link);
 					trigger_error($message);
 				}
 				else
 				{
 					$s_hidden_fields = '<input type="hidden" name="action" value="reports_close" />';
-					confirm_box(false, $this->user->lang['REPORT_A_CLOSE2_CONFIRM'], $s_hidden_fields);
+					confirm_box(false, $this->lang->lang('REPORT_A_CLOSE2_CONFIRM'), $s_hidden_fields);
 				}
 			break;
 			case 'reports_open':
 				$route = $this->helper->route('phpbbgallery_core_image_report', array('image_id'	=> $image_id));
-				redirect($this->url->get_uri($route));
+				$redirect = new RedirectResponse($route);
+				$redirect->send();
 			break;
 		}
 		$image_data = $this->image->get_image_data($image_id);
@@ -575,43 +578,43 @@ class moderate
 		$users_array[$image_data['image_user_id']] = array('');
 		$this->user_loader->load_users(array_keys($users_array));
 		// Now let's get some ACL
-		$select_select = '<option value="" selected="selected">' . $this->user->lang('CHOOSE_ACTION') . '</option>';
+		$select_select = '<option value="" selected="selected">' . $this->lang->lang('CHOOSE_ACTION') . '</option>';
 		$this->gallery_auth->load_user_premissions($this->user->data['user_id']);
 		if ($this->gallery_auth->acl_check('m_status', $album_data['album_id'], $album_data['album_user_id']))
 		{
 			if ($image_data['image_status'] == 0)
 			{
-				$select_select .= '<option value="images_approve">' . $this->user->lang('QUEUE_A_APPROVE') . '</option>';
-				$select_select .= '<option value="images_lock">' . $this->user->lang('QUEUE_A_LOCK') . '</option>';
+				$select_select .= '<option value="images_approve">' . $this->lang->lang('QUEUE_A_APPROVE') . '</option>';
+				$select_select .= '<option value="images_lock">' . $this->lang->lang('QUEUE_A_LOCK') . '</option>';
 			}
 			if ($image_data['image_status'] == 1)
 			{
-				$select_select .= '<option value="images_unapprove">' . $this->user->lang('QUEUE_A_UNAPPROVE') . '</option>';
-				$select_select .= '<option value="images_lock">' . $this->user->lang('QUEUE_A_LOCK') . '</option>';
+				$select_select .= '<option value="images_unapprove">' . $this->lang->lang('QUEUE_A_UNAPPROVE') . '</option>';
+				$select_select .= '<option value="images_lock">' . $this->lang->lang('QUEUE_A_LOCK') . '</option>';
 			}
 			else
 			{
-				$select_select .= '<option value="images_approve">' . $this->user->lang('QUEUE_A_APPROVE') . '</option>';
-				$select_select .= '<option value="images_unapprove">' . $this->user->lang('QUEUE_A_UNAPPROVE') . '</option>';
+				$select_select .= '<option value="images_approve">' . $this->lang->lang('QUEUE_A_APPROVE') . '</option>';
+				$select_select .= '<option value="images_unapprove">' . $this->lang->lang('QUEUE_A_UNAPPROVE') . '</option>';
 			}
 		}
 		if ($this->gallery_auth->acl_check('m_delete', $album_data['album_id'], $album_data['album_user_id']))
 		{
-			$select_select .= '<option value="images_delete">' . $this->user->lang('QUEUE_A_DELETE') . '</option>';
+			$select_select .= '<option value="images_delete">' . $this->lang->lang('QUEUE_A_DELETE') . '</option>';
 		}
 		if ($this->gallery_auth->acl_check('m_move', $album_data['album_id'], $album_data['album_user_id']))
 		{
-			$select_select .= '<option value="images_move">' . $this->user->lang('QUEUES_A_MOVE') . '</option>';
+			$select_select .= '<option value="images_move">' . $this->lang->lang('QUEUES_A_MOVE') . '</option>';
 		}
 		if ($this->gallery_auth->acl_check('m_report', $album_data['album_id'], $album_data['album_user_id']))
 		{
 			if ($open_report)
 			{
-				$select_select .= '<option value="reports_close">' . $this->user->lang('REPORT_A_CLOSE') . '</option>';
+				$select_select .= '<option value="reports_close">' . $this->lang->lang('REPORT_A_CLOSE') . '</option>';
 			}
 			else
 			{
-				$select_select .= '<option value="reports_open">' . $this->user->lang('REPORT_A_OPEN') . '</option>';
+				$select_select .= '<option value="reports_open">' . $this->lang->lang('REPORT_A_OPEN') . '</option>';
 			}
 		}
 		$this->template->assign_vars(array(
@@ -623,7 +626,7 @@ class moderate
 			'IMAGE_TIME'		=> $this->user->format_date($image_data['image_time']),
 			'UPLOADER'			=> $this->user_loader->get_username($image_data['image_user_id'], 'full'),
 			'U_MOVE_IMAGE'		=> $this->helper->route('phpbbgallery_core_moderate_image_move', array('image_id'	=> $image_id)),
-			'STATUS'			=> $this->user->lang['QUEUE_STATUS_' . $image_data['image_status']],
+			'STATUS'			=> $this->lang->lang('QUEUE_STATUS_' . $image_data['image_status']),
 			'UC_IMAGE'			=> $this->image->generate_link('medium', $this->config['phpbb_gallery_link_thumbnail'], $image_data['image_id'], $image_data['image_name'], $image_data['image_album_id']),
 			'IMAGE_DESC'		=> generate_text_for_display($image_data['image_desc'], $image_data['image_desc_uid'], $image_data['image_desc_bitfield'], 7),
 			'U_SELECT'			=> $select_select,
@@ -639,7 +642,7 @@ class moderate
 				'MANAGER'		=> $var['report_manager'] != 0 ?  $this->user_loader->get_username($var['report_manager'], 'full') : false,
 			));
 		}
-		return $this->helper->render('gallery/moderate_image_overview.html', $this->user->lang('GALLERY'));
+		return $this->helper->render('gallery/moderate_image_overview.html', $this->lang->lang('GALLERY'));
 	}
 
 	/**
@@ -647,7 +650,7 @@ class moderate
 	 *    Route: gallery/modarate/image/{image_id}/approve
 	 *
 	 * @param $image_id
-	 * @return Symfony\Component\HttpFoundation\Response A Symfony Response object
+	 * @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	 */
 	public function approve($image_id)
 	{
@@ -668,12 +671,12 @@ class moderate
 
 		if ($action == 'disapprove')
 		{
-			redirect($this->helper->route('phpbbgallery_core_image_delete', array('image_id'	=> $image_id)));
+			$redirect = new RedirectResponse($this->helper->route('phpbbgallery_core_image_delete', array('image_id'	=> $image_id)));
+			$redirect->send();
 		}
 		$show_notify = true;
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery_mcp'));
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery'));
-		$this->user->add_lang('mcp');
+		$this->lang->add_lang(array('gallery_mcp', 'gallery'), 'phpbbgallery/core');
+		$this->lang->add_lang('mcp');
 			if (confirm_box(true))
 			{
 				$np = $this->request->variable('notify_poster', '');
@@ -683,7 +686,7 @@ class moderate
 				$this->album->update_info($album_data['album_id']);
 				// So we need to see if there are still unapproved images in the album
 				$this->notification_helper->read('approval', $album_data['album_id']);
-				$message = sprintf($this->user->lang['WAITING_APPROVED_IMAGE'][1]);
+				$message = sprintf($this->lang->lang('WAITING_APPROVED_IMAGE', 1));
 				meta_refresh($meta_refresh_time, $image_backlink);
 				trigger_error($message);
 			}
@@ -694,14 +697,14 @@ class moderate
 					'S_' . strtoupper($action)	=> true,
 					'S_CONFIRM_ACTION'	=> $this->helper->route('phpbbgallery_core_moderate_image_approve', array('image_id' => $image_id)),
 				));
-				$action_msg = $this->user->lang['QUEUES_A_APPROVE2_CONFIRM'];
+				$action_msg = $this->lang->lang('QUEUES_A_APPROVE2_CONFIRM');
 				$s_hidden_fields = build_hidden_fields(array(
 					'action'		=> 'approve',
 				));
 				confirm_box(false, $action_msg, $s_hidden_fields, 'mcp_approve.html');
 			}
 
-		return $this->helper->render('gallery/moderate_overview.html', $this->user->lang('GALLERY'));
+		return $this->helper->render('gallery/moderate_overview.html', $this->lang->lang('GALLERY'));
 	}
 
 	/**
@@ -709,7 +712,7 @@ class moderate
 	 *    Route: gallery/modarate/image/{image_id}/unapprove
 	 *
 	 * @param $image_id
-	 * @return Symfony\Component\HttpFoundation\Response A Symfony Response object
+	 * @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	 */
 	public function unapprove($image_id)
 	{
@@ -726,15 +729,14 @@ class moderate
 			$this->misc->not_authorised($album_backlink, $album_loginlink, 'LOGIN_EXPLAIN_UPLOAD');
 		}
 
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery_mcp'));
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery'));
-		$this->user->add_lang('mcp');
+		$this->lang->add_lang(array('gallery_mcp', 'gallery'), 'phpbbgallery/core');
+		$this->lang->add_lang('mcp');
 		if (confirm_box(true))
 		{
 			$image_id_ary = array($image_id);
 			$this->image->unapprove_images($image_id_ary, $album_data['album_id']);
 			// To DO - add notification
-			$message = sprintf($this->user->lang['WAITING_UNAPPROVED_IMAGE'][1]);
+			$message = sprintf($this->lang->lang('WAITING_UNAPPROVED_IMAGE', 1));
 			meta_refresh($meta_refresh_time, $image_backlink);
 			trigger_error($message);
 		}
@@ -750,20 +752,19 @@ class moderate
 	 *    Route: gallery/modarate/image/{image_id}/move
 	 *
 	 * @param $image_id
-	 * @return Symfony\Component\HttpFoundation\Response A Symfony Response object
+	 * @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	 */
 	public function move($image_id)
 	{
 		$image_data = $this->image->get_image_data($image_id);
 		$album_id = $image_data['image_album_id'];
-		$user_id = $image_data['image_user_id'];
+		//$user_id = $image_data['image_user_id'];
 		$album_data =  $this->album->get_info($album_id);
 		$album_backlink = $this->helper->route('phpbbgallery_core_album', array('album_id' => $album_id));
 		$image_backlink = $this->helper->route('phpbbgallery_core_image', array('image_id' => $image_id));
 		$album_loginlink = append_sid($this->root_path . 'ucp.' . $this->php_ext . '?mode=login');
 		$meta_refresh_time = 2;
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery_mcp'));
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery'));
+		$this->lang->add_lang(array('gallery_mcp', 'gallery'), 'phpbbgallery/core');
 		$this->gallery_auth->load_user_premissions($this->user->data['user_id']);
 		if (!$this->gallery_auth->acl_check('m_move', $image_data['image_album_id'], $album_data['album_user_id']))
 		{
@@ -775,7 +776,7 @@ class moderate
 		{
 			$target = array($image_id);
 			$this->image->move_image($target, $moving_target);
-			$message = sprintf($this->user->lang['IMAGES_MOVED'][1]);
+			$message = sprintf($this->lang->lang('IMAGES_MOVED', 1));
 			$this->album->update_info($album_id);
 			$this->album->update_info($moving_target);
 			meta_refresh($meta_refresh_time, $image_backlink);
@@ -791,7 +792,7 @@ class moderate
 			));
 		}
 
-		return $this->helper->render('gallery/mcp_body.html', $this->user->lang('GALLERY'));
+		return $this->helper->render('gallery/mcp_body.html', $this->lang->lang('GALLERY'));
 	}
 
 	/**
@@ -799,20 +800,19 @@ class moderate
 	 *    Route: gallery/modarate/image/{image_id}/lock
 	 *
 	 * @param $image_id
-	 * @return Symfony\Component\HttpFoundation\Response A Symfony Response object
+	 * @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	 */
 	public function lock($image_id)
 	{
 		$image_data = $this->image->get_image_data($image_id);
 		$album_id = $image_data['image_album_id'];
-		$user_id = $image_data['image_user_id'];
+		//$user_id = $image_data['image_user_id'];
 		$album_data =  $this->album->get_info($album_id);
 		$album_backlink = $this->helper->route('phpbbgallery_core_album', array('album_id' => $album_id));
 		$image_backlink = $this->helper->route('phpbbgallery_core_image', array('image_id' => $image_id));
 		$album_loginlink = append_sid($this->root_path . 'ucp.' . $this->php_ext . '?mode=login');
 		$meta_refresh_time = 2;
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery_mcp'));
-		$this->user->add_lang_ext('phpbbgallery/core', array('gallery'));
+		$this->lang->add_lang(array('gallery_mcp', 'gallery'), 'phpbbgallery/core');
 		$this->gallery_auth->load_user_premissions($this->user->data['user_id']);
 		if (!$this->gallery_auth->acl_check('m_status', $image_data['image_album_id'], $album_data['album_user_id']))
 		{
@@ -823,7 +823,7 @@ class moderate
 			$image_id_ary = array($image_id);
 			$this->image->lock_images($image_id_ary, $album_data['album_id']);
 			// To DO - add notification
-			$message = sprintf($this->user->lang['WAITING_LOCKED_IMAGE'][1]);
+			$message = sprintf($this->lang->lang('WAITING_LOCKED_IMAGE',1));
 			meta_refresh($meta_refresh_time, $image_backlink);
 			trigger_error($message);
 		}

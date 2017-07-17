@@ -40,7 +40,7 @@ class controller_base extends \phpbb_database_test_case
 	*/
 	public function setUp()
 	{
-		global $request;
+		global $request, $phpbb_root_path, $phpEx;
 		parent::setUp();
 		//Let's build some deps
 		$this->auth = $this->getMock('\phpbb\auth\auth');
@@ -57,7 +57,16 @@ class controller_base extends \phpbb_database_test_case
 		$this->template = $this->getMockBuilder('\phpbb\template\template')
 			->getMock();
 
-		$this->user = $this->getMock('\phpbb\user', array(), array('\phpbb\datetime'));
+		$this->language = $this->getMockBuilder('\phpbb\language\language')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->language->method('lang')
+			->will($this->returnArgument(0));
+
+		$this->user = $this->getMock('\phpbb\user', array(), array(
+			new \phpbb\language\language(new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx)),
+			'\phpbb\datetime'
+		));
 		$this->user
 			->method('lang')
 			->will($this->returnArgument(0));
@@ -85,7 +94,7 @@ class controller_base extends \phpbb_database_test_case
 			->will($this->returnArgument(0));
 
 		$cache = $this->cache = new \phpbb\cache\service(
-			new \phpbb\cache\driver\null(),
+			new \phpbb\cache\driver\dummy(),
 			$this->config,
 			$this->db,
 			$phpbb_root_path,
@@ -190,6 +199,7 @@ class controller_base extends \phpbb_database_test_case
 		$this->gallery_album = new \phpbbgallery\core\album\album(
 			$this->db,
 			$this->user,
+			$this->language,
 			$this->gallery_auth,
 			$this->gallery_cache,
 			$this->block,
@@ -199,8 +209,6 @@ class controller_base extends \phpbb_database_test_case
 			'phpbb_gallery_watch',
 			'phpbb_gallery_contests'
 		);
-
-
 
 
 		// Let's build Search
@@ -226,6 +234,79 @@ class controller_base extends \phpbb_database_test_case
 			$this->config,
 			'/',
 			'adm'
+		);
+		$this->log = new \phpbbgallery\core\log(
+			$this->db,
+			$this->user,
+			$this->user_loader,
+			$this->template,
+			$this->controller_helper,
+			$this->pagination,
+			$this->gallery_auth,
+			$this->gallery_config,
+			'phpbb_gallery_log',
+			'phpbb_gallery_images'
+		);
+		$this->gallery_report = new \phpbbgallery\core\report(
+			$this->log,
+			$this->gallery_auth,
+			$this->user,
+			$this->db,
+			$this->user_loader,
+			$this->gallery_album,
+			$this->template,
+			$this->controller_helper,
+			$this->gallery_config,
+			$this->pagination,
+			$this->gallery_notification_helper,
+			'phpbb_gallery_images',
+			'phpbb_gallery_reports'
+		);
+
+		$this->gallery_comment = new \phpbbgallery\core\comment(
+			$this->user,
+			$this->db,
+			$this->gallery_config,
+			$this->gallery_auth,
+			$this->block,
+			'phpbb_gallery_comments',
+			'phpbb_gallery_images'
+		);
+
+		$this->gallery_rating = new \phpbbgallery\core\rating(
+			$this->db,
+			$this->template,
+			$this->user,
+			$this->request,
+			$this->gallery_config,
+			$this->gallery_auth,
+			'phpbb_gallery_images',
+			'phpbb_gallery_albums',
+			'phpbb_gallery_rates'
+		);
+
+		$this->gallery_notification = new \phpbbgallery\core\notification(
+			$this->db,
+			$this->user,
+			'phpbb_gallery_watch'
+		);
+		$this->gallery_moderate = new \phpbbgallery\core\moderate(
+			$this->db,
+			$this->template,
+			$this->controller_helper,
+			$this->user,
+			$this->language,
+			$this->user_loader,
+			$this->gallery_album,
+			$this->gallery_auth,
+			$this->pagination,
+			$this->gallery_comment,
+			$this->gallery_report,
+			$this->gallery_image,
+			$this->gallery_config,
+			$this->gallery_notification,
+			$this->gallery_rating,
+			'phpbb_gallery_images'
 		);
 	}
 }

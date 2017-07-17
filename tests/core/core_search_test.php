@@ -65,6 +65,7 @@ class core_search_test extends core_base
 		$this->gallery_album = new \phpbbgallery\core\album\album(
 			$this->db,
 			$this->user,
+			$this->language,
 			$this->gallery_auth,
 			$this->gallery_cache,
 			$this->block,
@@ -90,7 +91,8 @@ class core_search_test extends core_base
 			$this->pagination,
 			$this->gallery_auth,
 			$this->gallery_config,
-			'phpbb_gallery_log'
+			'phpbb_gallery_log',
+			'phpbb_gallery_images'
 		);
 		$this->notification_helper = $this->getMockBuilder('\phpbbgallery\core\notification\helper')
 			->disableOriginalConstructor()

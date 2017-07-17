@@ -24,26 +24,26 @@ class gallery_album_test extends controller_base
 	*/
 	public function setUp()
 	{
-		
+
 		parent::setUp();
-		
+
 		global $phpbb_dispatcher, $auth, $user, $cache, $db, $request;
-		
+
 		$phpbb_dispatcher = $this->dispatcher;
-		
+
 		$auth = $this->auth;
-		
+
 		$user = $this->user;
-		
+
 		$cache = $this->cache;
-		
+
 		$db = $this->db;
-		
+
 		$request = $this->request;
 
 	}
-	
-	public function get_controller($user_id, $grpup, $is_registered)
+
+	public function get_controller($user_id, $group, $is_registered)
 	{
 		$this->user->data['user_id'] = $user_id;
 		$this->user->data['group'] = $group;
@@ -66,7 +66,7 @@ class gallery_album_test extends controller_base
 			$this->request,
 			'phpbb_gallery_images'
 		);
-		
+
 		return $controller;
 	}
 
@@ -138,7 +138,7 @@ class gallery_album_test extends controller_base
 						'TIME' => null,
 						'S_RATINGS' => false,
 						'U_RATINGS' => 'phpbbgallery_core_image#rating',
-						'L_COMMENTS' => null,
+						'L_COMMENTS' => 'COMMENT',
 						'S_COMMENTS' => '',
 						'U_COMMENTS' => 'phpbbgallery_core_image#comments',
 						'U_USER_IP' => false,
@@ -150,7 +150,7 @@ class gallery_album_test extends controller_base
 						'S_STATUS_LOCKED' => false,
 						'U_REPORT' => '',
 						'U_STATUS' => '',
-						'L_STATUS' => null,
+						'L_STATUS' => 'CHANGE_IMAGE_STATUS',
 					)
 				),
 				array(
@@ -171,7 +171,7 @@ class gallery_album_test extends controller_base
 						'TIME' => null,
 						'S_RATINGS' => false,
 						'U_RATINGS' => 'phpbbgallery_core_image#rating',
-						'L_COMMENTS' => null,
+						'L_COMMENTS' => 'COMMENT',
 						'S_COMMENTS' => '',
 						'U_COMMENTS' => 'phpbbgallery_core_image#comments',
 						'U_USER_IP' => false,
@@ -183,7 +183,7 @@ class gallery_album_test extends controller_base
 						'S_STATUS_LOCKED' => false,
 						'U_REPORT' => '',
 						'U_STATUS' => '',
-						'L_STATUS' => null,
+						'L_STATUS' => 'CHANGE_IMAGE_STATUS',
 					)
 				),
 				array(
@@ -204,7 +204,7 @@ class gallery_album_test extends controller_base
 						'TIME' => null,
 						'S_RATINGS' => false,
 						'U_RATINGS' => 'phpbbgallery_core_image#rating',
-						'L_COMMENTS' => null,
+						'L_COMMENTS' => 'COMMENT',
 						'S_COMMENTS' => '',
 						'U_COMMENTS' => 'phpbbgallery_core_image#comments',
 						'U_USER_IP' => false,
@@ -216,7 +216,7 @@ class gallery_album_test extends controller_base
 						'S_STATUS_LOCKED' => false,
 						'U_REPORT' => '',
 						'U_STATUS' => '',
-						'L_STATUS' => null,
+						'L_STATUS' => 'CHANGE_IMAGE_STATUS',
 					)
 				)
 			);
@@ -256,7 +256,7 @@ class gallery_album_test extends controller_base
 					array(
 						'TOTAL_IMAGES' => 'VIEW_ALBUM_IMAGES',
 						'S_SELECT_SORT_DIR' => '<select name="sd" id="sd"><option value="a" selected="selected"></option><option value="d"></option></select>',
-						'S_SELECT_SORT_KEY' => '<select name="sk" id="sk"><option value="t" selected="selected"></option><option value="n"></option><option value="vc"></option><option value="u"></option></select>'
+						'S_SELECT_SORT_KEY' => '<select name="sk" id="sk"><option value="t" selected="selected">TIME</option><option value="n">IMAGE_NAME</option><option value="vc">GALLERY_VIEWS</option><option value="u">SORT_USERNAME</option></select>'
 					)
 				)
 			);
@@ -266,7 +266,7 @@ class gallery_album_test extends controller_base
 		$this->assertEquals('200', $response->getStatusCode());
 	}
 
-	/** 
+	/**
 	* Let's test for base with some options
 	* so we can get some more coveralls to go cover
 	*/
@@ -350,7 +350,7 @@ class gallery_album_test extends controller_base
 						'TIME' => null,
 						'S_RATINGS' => 'NOT_RATED',
 						'U_RATINGS' => 'phpbbgallery_core_image#rating',
-						'L_COMMENTS' => null,
+						'L_COMMENTS' => 'COMMENT',
 						'S_COMMENTS' => 1,
 						'U_COMMENTS' => 'phpbbgallery_core_image#comments',
 						'U_USER_IP' => false,
@@ -362,7 +362,7 @@ class gallery_album_test extends controller_base
 						'S_STATUS_LOCKED' => false,
 						'U_REPORT' => '',
 						'U_STATUS' => '',
-						'L_STATUS' => null,
+						'L_STATUS' => 'CHANGE_IMAGE_STATUS',
 					)
 				),
 				array(
@@ -383,7 +383,7 @@ class gallery_album_test extends controller_base
 						'TIME' => null,
 						'S_RATINGS' => 1.5,
 						'U_RATINGS' => 'phpbbgallery_core_image#rating',
-						'L_COMMENTS' => null,
+						'L_COMMENTS' => 'COMMENT',
 						'S_COMMENTS' => 1,
 						'U_COMMENTS' => 'phpbbgallery_core_image#comments',
 						'U_USER_IP' => false,
@@ -395,7 +395,7 @@ class gallery_album_test extends controller_base
 						'S_STATUS_LOCKED' => false,
 						'U_REPORT' => '',
 						'U_STATUS' => '',
-						'L_STATUS' => null,
+						'L_STATUS' => 'CHANGE_IMAGE_STATUS',
 					)
 				),
 				array(
@@ -416,7 +416,7 @@ class gallery_album_test extends controller_base
 						'TIME' => null,
 						'S_RATINGS' => 'NOT_RATED',
 						'U_RATINGS' => 'phpbbgallery_core_image#rating',
-						'L_COMMENTS' => null,
+						'L_COMMENTS' => 'COMMENT',
 						'S_COMMENTS' => 1,
 						'U_COMMENTS' => 'phpbbgallery_core_image#comments',
 						'U_USER_IP' => false,
@@ -428,7 +428,7 @@ class gallery_album_test extends controller_base
 						'S_STATUS_LOCKED' => false,
 						'U_REPORT' => '',
 						'U_STATUS' => '',
-						'L_STATUS' => null,
+						'L_STATUS' => 'CHANGE_IMAGE_STATUS',
 					)
 				)
 			);
@@ -474,7 +474,7 @@ class gallery_album_test extends controller_base
 					array(
 						'TOTAL_IMAGES' => 'VIEW_ALBUM_IMAGES',
 						'S_SELECT_SORT_DIR' => '<select name="sd" id="sd"><option value="a" selected="selected"></option><option value="d"></option></select>',
-						'S_SELECT_SORT_KEY' => '<select name="sk" id="sk"><option value="t" selected="selected"></option><option value="n"></option><option value="vc"></option><option value="u"></option><option value="ra"></option><option value="r"></option><option value="c"></option><option value="lc"></option></select>'
+						'S_SELECT_SORT_KEY' => '<select name="sk" id="sk"><option value="t" selected="selected">TIME</option><option value="n">IMAGE_NAME</option><option value="vc">GALLERY_VIEWS</option><option value="u">SORT_USERNAME</option><option value="ra">RATING</option><option value="r">RATES_COUNT</option><option value="c">COMMENTS</option><option value="lc">NEW_COMMENT</option></select>'
 					)
 				)
 			);
@@ -489,7 +489,7 @@ class gallery_album_test extends controller_base
 		$this->assertInstanceOf('\Symfony\Component\HttpFoundation\Response', $response);
 		$this->assertEquals('200', $response->getStatusCode());
 	}
-	
+
 	/**
 	* We will test try to load wrong album
 	*/

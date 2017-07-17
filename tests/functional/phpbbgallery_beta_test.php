@@ -1491,7 +1491,7 @@ class phpbbgallery_beta_test extends phpbbgallery_base
 		$form['files'] = array(__DIR__ . '/images/valid.jpg');
 		$crawler = self::submit($form);
 
-		$this->assertContains($this->lang('FILE_WRONG_FILESIZE'), $crawler->filter('p.error')->text());
+		$this->assertContains($this->lang('BAD_UPLOAD_FILE_SIZE'), $crawler->filter('p.error')->text());
 
 		$crawler = self::request('GET', 'adm/index.php?i=-phpbbgallery-core-acp-config_module&mode=main&sid=' . $this->sid);
 		$form = $crawler->selectButton('submit')->form();
@@ -1770,7 +1770,7 @@ class phpbbgallery_beta_test extends phpbbgallery_base
 		}
 		else
 		{
-			$this->assertContains($this->lang('FILE_DISALLOWED_EXTENSION'), $crawler->filter('p.error')->text());
+			$this->assertContains($this->lang('DISALLOWED_EXTENSION'), $crawler->filter('p.error')->text());
 		}
 		$this->logout();
 		$this->logout();
@@ -1815,7 +1815,7 @@ class phpbbgallery_beta_test extends phpbbgallery_base
 		}
 		else
 		{
-			$this->assertContains($this->lang('FILE_DISALLOWED_EXTENSION'), $crawler->filter('p.error')->text());
+			$this->assertContains($this->lang('DISALLOWED_EXTENSION'), $crawler->filter('p.error')->text());
 		}
 		$this->logout();
 		$this->logout();
@@ -1860,12 +1860,15 @@ class phpbbgallery_beta_test extends phpbbgallery_base
 		}
 		else
 		{
-			$this->assertContains($this->lang('FILE_DISALLOWED_EXTENSION'), $crawler->filter('p.error')->text());
+			$this->assertContains($this->lang('DISALLOWED_EXTENSION'), $crawler->filter('p.error')->text());
 		}
 		$this->logout();
 		$this->logout();
 	}
-	/*public function test_allow_zip($option)
+	/**
+	 * @dataProvider yes_no_data
+	 */
+	public function test_allow_zip($option)
 	{
 		$this->login();
 		$this->admin_login();
@@ -1888,7 +1891,7 @@ class phpbbgallery_beta_test extends phpbbgallery_base
 		$upload_url = substr($crawler->filter('a:contains("' . $this->lang('UPLOAD_IMAGE') . '")')->attr('href'), 1);
 		$crawler = self::request('GET', $upload_url);
 		$form = $crawler->selectButton($this->lang('CONTINUE'))->form();
-		$form['image_file_0'] =  __DIR__ . '/images/valid.zip';
+		$form['files'] =  array(__DIR__ . '/images/valid.zip');
 		$crawler = self::submit($form);
 		if ($option == 1)
 		{
@@ -1906,7 +1909,7 @@ class phpbbgallery_beta_test extends phpbbgallery_base
 		}
 		$this->logout();
 		$this->logout();
-	}*/
+	}
 	public function test_description_length()
 	{
 		$this->login();
